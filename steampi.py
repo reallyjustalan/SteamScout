@@ -1,5 +1,6 @@
 import logging
 from steam.client import SteamClient, builtins, user
+from steam.steamid import SteamID
 from steam.enums import EResult, EPersonaState
 from dotenv import load_dotenv
 import os
@@ -8,18 +9,15 @@ import gevent
 import datetime
 import pprint
 
-print = pprint.pp
-  # Good practice with gevent
+
 
 load_dotenv()
 
 # setup logging
-logging.basicConfig(format="%(asctime)s | %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s | %(message)s", level=logging.DEBUG)
 LOG = logging.getLogger()
 
 client = SteamClient()
-client.set_credential_location(".")  # where to store sentry files and other stuff
-
 
 @client.on("error")
 def handle_error(result):
@@ -65,10 +63,6 @@ def handle_chat_message(steamuser, message):
 last_played = {}
 presence_greenlets = {}
 
-def nowstr():
-    return datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
-
-
 def poll_rich_presence(friend):
     """Poll and print rich presence every 5 seconds while the friend is in game."""
     last_rp = None
@@ -78,28 +72,26 @@ def poll_rich_presence(friend):
             break  # Stop if friend is no longer in game
         rp = friend.rich_presence
         if rp != last_rp:
-            print(f"{nowstr()} {friend.name} rich presence: {rp}")
-            friend.send_message(f"Rich presence update: {rp}")
+            LOG.info(f" {friend.name} rich presence: {rp}")
             last_rp = rp
         gevent.sleep(5)
 
 def poll_friends_games():
     while True:
-        # Print all friend names in one line, with timestamp
         names = [f.name for f in client.friends]
-        print(f"{nowstr()} Checking games for: {', '.join(names)}")
+        LOG.info("Polling friends' games: %s", names)
         for friend in client.friends:
             current_app = friend.get_ps("game_played_app_id")
             previous_app = last_played.get(friend.steam_id)
             if current_app != previous_app:
                 if current_app:
-                    print(f"{nowstr()} {friend.name} started playing {current_app}")
+                    LOG.info(f"{friend.name} started playing {current_app}")
                     # Start polling rich presence in a new greenlet
                     if friend.steam_id not in presence_greenlets:
                         g = gevent.spawn(poll_rich_presence, friend)
                         presence_greenlets[friend.steam_id] = g
                 elif previous_app:
-                    print(f"{nowstr()} {friend.name} stopped playing {previous_app}")
+                    LOG.info(f"{friend.name} stopped playing {previous_app}")
                     # Stop polling rich presence (the poller exits automatically)
                     if friend.steam_id in presence_greenlets:
                         # We can't force kill the greenlet, but it will exit on its own
@@ -109,7 +101,7 @@ def poll_friends_games():
 
 @client.friends.on('ready')
 def when_friendlist_ready():
-    print("Friendlist ready, starting presence poller")
+    LOG.info("Friendlist ready, starting presence poller")
     gevent.spawn(poll_friends_games)  # Start poller as a greenlet
 
 
@@ -122,10 +114,8 @@ try:
     if result != EResult.OK:
         LOG.info("Failed to login: %s" % repr(result))
         raise SystemExit
-    LOG.info("Login successful")
-    client.change_status(persona_state = EPersonaState.Online)
+    LOG.info("Login successful")  
     client.run_forever()
-
 
 except KeyboardInterrupt:
     if client.connected:

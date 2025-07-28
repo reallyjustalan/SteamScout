@@ -109,6 +109,19 @@ wheels = [
 ]
 
 [[package]]
+name = "csgo"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gevent" },
+    { name = "gevent-eventemitter" },
+    { name = "protobuf" },
+    { name = "six" },
+    { name = "steam" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4b/d4/95b4100349c25bf8598cac0ce156523ba0d9a69a3f4e21d1c4f191aaefce/csgo-1.0.0.tar.gz", hash = "sha256:831c527ab6f8b2b5998fb271aac51d8d6dede3d614ac6c29c457812eb2d1cdba", size = 109838, upload-time = "2020-05-02T18:09:23.229Z" }
+
+[[package]]
 name = "dotenv"
 version = "0.9.9"
 source = { registry = "https://pypi.org/simple" }
@@ -329,12 +342,14 @@ name = "steambot"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "csgo" },
     { name = "dotenv" },
     { name = "steamctl" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "csgo", specifier = ">=1.0.0" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "steamctl", specifier = ">=0.9.5" },
 ]
