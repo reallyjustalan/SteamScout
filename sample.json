@@ -1,0 +1,46 @@
+{
+  "all_users": [
+    {
+      "steam_id": 76561198058174816,
+      "name": "boi",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198079886715,
+      "name": "kwangyy",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198138611129,
+      "name": "good boy",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198152763352,
+      "name": "fatrolls",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198157969351,
+      "name": "Oynx",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198158075658,
+      "name": "babadio af",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    },
+    {
+      "steam_id": 76561198315082125,
+      "name": "Baba did the laundry",
+      "game_played_app_id": null,
+      "rich_presence": {}
+    }
+  ]
+}
