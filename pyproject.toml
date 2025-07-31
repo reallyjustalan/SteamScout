@@ -1,0 +1,12 @@
+[project]
+name = "steambot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi[standard]>=0.116.1",
+    "steamctl>=0.9.5",
+    "telethon>=1.40.0",
+]
