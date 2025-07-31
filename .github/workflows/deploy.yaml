@@ -14,39 +14,37 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           HOST: ${{ secrets.SSH_ADDRESS }}
-          USER: ${{ secrets.SSH_USERNAME}}
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
-          BRANCH: ${{ github.ref_name }}
+          USER: ${{ secrets.SSH_USERNAME }}
         run: |
           printf '%s\n' "${{ secrets.SSH_KEY }}" > github-ec2.pem
           chmod 600 github-ec2.pem
 
-          ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST} 'bash -s' <<'EOF'
+          ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST} "bash -s" <<EOF
             set -e
+            REPO_URL=${{ github.server_url }}/${{ github.repository }}.git
+            BRANCH=${{ github.ref_name }}
 
-            REPO_DIR="$HOME/steamscout"
-            REPO_URL="${REPO_URL}"
-            BRANCH="${BRANCH}"
+            echo "Deploying to EC2 instance..."
+            echo "Repository URL: \$REPO_URL"
+            echo "Branch: \$BRANCH"
 
-            if [ -d "$REPO_DIR/.git" ]; then
-              cd "$REPO_DIR"
-              git pull origin "$BRANCH"
+            REPO_DIR="\$HOME/steamscout"
+
+            if [ -d "\$REPO_DIR/.git" ]; then
+              cd "\$REPO_DIR"
+              git pull origin "\$BRANCH"
             else
               echo "Cloning repository..."
-              echo "Repository URL: $REPO_URL"
-              git clone "$REPO_URL" "$REPO_DIR"
-              cd "$REPO_DIR"
+              git clone "\$REPO_URL" "\$REPO_DIR"
+              cd "\$REPO_DIR"
             fi
 
-            docker build -t steamscout .
-
-            # Stop and remove any existing container
+            # Optional: Clean up old container first (safer for old images)
             docker stop steamscout || true
             docker rm steamscout || true
+
+            docker build -t steamscout .
 
             # Run the new container
             docker run -d --name steamscout -p 80:80 steamscout
           EOF
-
-
-
