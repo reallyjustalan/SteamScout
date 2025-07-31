@@ -46,9 +46,8 @@ def build_message_and_buttons(users):
 
     lines = []
     for app_id, groupings in games.items():
-        game_name = "CS2" if app_id == 730 else ("CS2 Danger Zone" if app_id == 740 else f"App {app_id}")
+        game_name = "CS2" if app_id == 730 else f"App {app_id}"
         lines.append(f"🎮 **{game_name}**:")
-
         for group_id, userlist in groupings.items():
             # Let's extract shared map, score, mode info for the group
             first_rp = userlist[0]['rich_presence'] if userlist[0].get('rich_presence') else {}
