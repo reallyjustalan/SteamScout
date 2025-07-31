@@ -9,4 +9,5 @@ dependencies = [
     "fastapi[standard]>=0.116.1",
     "steamctl>=0.9.5",
     "telethon>=1.40.0",
+    "uvicorn>=0.35.0",
 ]
