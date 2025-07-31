@@ -44,7 +44,5 @@ jobs:
             docker run -d --name steamscout -p 80:80 steamscout
           EOF
 
-Let me know if you want to support additional use cases or need a quick test script!
-
 
 
