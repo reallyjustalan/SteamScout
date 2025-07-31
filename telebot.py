@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from os import getenv
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 load_dotenv()
 
@@ -23,7 +24,7 @@ def get_users():
 
 
 def build_message_and_buttons(users):
-    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    now = datetime.now(ZoneInfo('Asia/Singapore')).strftime('%d/%m/%y - %I:%M:%S %p')
 
     
     if not users:
