@@ -25,6 +25,8 @@ jobs:
             set -e
 
             REPO_DIR="$HOME/steamscout"
+            REPO_URL="${REPO_URL}"
+            BRANCH="${BRANCH}"
 
             if [ -d "$REPO_DIR/.git" ]; then
               cd "$REPO_DIR"
