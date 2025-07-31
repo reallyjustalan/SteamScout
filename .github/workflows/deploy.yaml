@@ -15,7 +15,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           HOST: ${{ secrets.SSH_ADDRESS }}
           USER: ${{ secrets.SSH_USERNAME}}
-          REPO_URL: ${{ github.repositoryUrl }}
+          REPO_URL: ${{ GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}.git
           BRANCH: ${{ github.ref_name }}
         run: |
           printf '%s\n' "${{ secrets.SSH_KEY }}" > github-ec2.pem
