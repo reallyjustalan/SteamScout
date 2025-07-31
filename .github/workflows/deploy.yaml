@@ -14,7 +14,7 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           HOST: ${{ secrets.SSH_ADDRESS }}
-          USER: ${{ secrets.SSH_USER }}
+          USER: ${{ secrets.SSH_USERNAME}}
           REPO_URL: ${{ github.repositoryUrl }}
           BRANCH: ${{ github.ref_name }}
         run: |
