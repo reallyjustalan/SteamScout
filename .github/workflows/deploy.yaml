@@ -151,16 +151,14 @@ jobs:
               cd "$REPO_DIR"
             fi
 
-            if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
-              docker compose down || true
-              docker compose build
-              docker compose up -d
-            else
-              docker stop steamscout || true
-              docker rm steamscout || true
-              docker build -t steamscout .
-              docker run -d --name steamscout -p 80:80 steamscout
-            fi
+            docker build -t steamscout .
+
+            # Stop and remove any existing container
+            docker stop steamscout || true
+            docker rm steamscout || true
+
+            # Run the new container
+            docker run -d --name steamscout -p 80:80 steamscout
           EOF
 
 Let me know if you want to support additional use cases or need a quick test script!
