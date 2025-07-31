@@ -18,7 +18,7 @@ jobs:
           REPO_URL: ${{ github.repositoryUrl }}
           BRANCH: ${{ github.ref_name }}
         run: |
-          echo "$PRIVATE_KEY" > github-ec2.pem
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > github-ec2.pem
           chmod 600 github-ec2.pem
 
           ssh -o StrictHostKeyChecking=no -i github-ec2.pem ${USER}@${HOST} 'bash -s' <<'EOF'
