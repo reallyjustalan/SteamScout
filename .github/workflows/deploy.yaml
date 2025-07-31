@@ -15,7 +15,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           HOST: ${{ secrets.SSH_ADDRESS }}
           USER: ${{ secrets.SSH_USERNAME}}
-          REPO_URL: ${{ GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}.git
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
           BRANCH: ${{ github.ref_name }}
         run: |
           printf '%s\n' "${{ secrets.SSH_KEY }}" > github-ec2.pem
@@ -30,6 +30,8 @@ jobs:
               cd "$REPO_DIR"
               git pull origin "$BRANCH"
             else
+              echo "Cloning repository..."
+              echo "Repository URL: $REPO_URL"
               git clone "$REPO_URL" "$REPO_DIR"
               cd "$REPO_DIR"
             fi
