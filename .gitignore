@@ -10,6 +10,13 @@ wheels/
 .venv
 
 .env
+.env.*
+!.env.example
+
 .python-version
 
-.session*
+*.session
+*.session*
+
+#logging
+*.log

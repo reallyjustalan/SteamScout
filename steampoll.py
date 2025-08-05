@@ -10,8 +10,6 @@ import gevent
 import datetime
 import pprint
 
-
-
 load_dotenv()
 
 # setup logging

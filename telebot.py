@@ -1,20 +1,35 @@
 from telethon import TelegramClient, events, Button
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from os import getenv
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from collections import defaultdict
-load_dotenv()
+import argparse
+import logging
+import asyncio
+
+logging.basicConfig(filename="bot.log", 
+                    filemode='a',
+                    level=logging.INFO, 
+                    format="TB:%(asctime)s | %(message)s")
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--test", action="store_true", help="Run in test mode")
+
+if parser.parse_args().test:
+    logging.info("Running in test mode, loading .env.dev")
+    env_file = find_dotenv(".env.dev")
+    load_dotenv(env_file)
+else:
+    logging.info("Running in production mode, loading .env")
+    load_dotenv()
 
 api_id = getenv('TELEGRAM_API_ID')
 api_hash = getenv('TELEGRAM_API_HASH')
 bot_token = getenv('TELEGRAM_API_KEY')
 
 url = "http://localhost:8000"
-
-
-client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 def get_users():
     response = requests.get(f"{url}/people/")
@@ -24,8 +39,7 @@ def get_users():
 
 
 def build_message_and_buttons(users):
-    now = datetime.now(ZoneInfo('Asia/Singapore')).strftime('%d/%m/%y - %I:%M:%S %p')
-
+    now = datetime.now(ZoneInfo('Asia/Singapore')).strftime('%d/%m/%y - %I:%M:%S%p')
     
     if not users:
         text = f"No users are currently being tracked.\n\n_Last updated: {now}_"
@@ -101,18 +115,33 @@ def build_message_and_buttons(users):
     return text, buttons
 
 
-@client.on(events.NewMessage)
-async def my_event_handler(event):
-    if 'status' in event.raw_text:
+async def main():
+    client = TelegramClient('bot', api_id, api_hash)
+
+    @client.on(events.NewMessage)
+    async def my_event_handler(event):
+        if 'status' in event.raw_text:
+            users = get_users()
+            text, buttons = build_message_and_buttons(users)
+            await event.reply(text, buttons=buttons)
+        elif 'ping' in event.raw_text.lower():
+            await event.reply("PONG")
+        elif 'bing' in event.raw_text.lower():
+            await event.reply("BONG")
+
+    @client.on(events.CallbackQuery(data=b"update_status"))
+    async def handler(event):
         users = get_users()
         text, buttons = build_message_and_buttons(users)
-        await event.reply(text, buttons=buttons)
+        await event.edit(text, buttons=buttons)
 
-@client.on(events.CallbackQuery(data=b"update_status"))
-async def handler(event):
-    users = get_users()
-    text, buttons = build_message_and_buttons(users)
-    await event.edit(text, buttons=buttons)
+    await client.start(bot_token=bot_token)
+    me = await client.get_me()
+    
+    logging.info(f"Telegram bot client started. Bot ID: {me.username}")
+    logging.info(f"Bot is running as: {me.first_name} (@{me.username})")
+    await client.run_until_disconnected()
 
-client.start()
-client.run_until_disconnected()
+# --- Entrypoint ---
+if __name__ == "__main__":
+    asyncio.run(main())
